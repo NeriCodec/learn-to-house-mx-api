@@ -1,9 +1,10 @@
 {
-  "name": "aprende-en-casa-scrapper",
+  "name": "aprende-en-casa-scraper",
   "version": "1.0.0",
-  "description": "aprende en casa scraper",
+  "description": "aprende en casa",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -16,5 +17,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "scrape-it": "^5.2.4"
+  },
+  "engines": {
+    "node": "10.x"
   }
 }

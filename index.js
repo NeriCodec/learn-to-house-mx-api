@@ -1,8 +1,8 @@
-const express = require("express");
-const app = express();
-const scrapeIt = require("scrape-it");
+var express = require("express");
+var app = express();
+var scrapeIt = require("scrape-it");
 
-const port = process.env.PORT || 3000;
+var port = process.env.PORT || 3000;
 
 app.get("/get-calendar", async (req, res) => {
   try {
@@ -158,6 +158,4 @@ async function getMaterial(url, id) {
   return description;
 }
 
-app.listen(port, () => {
-  console.log(`listening at http://localhost:${port}`);
-});
+app.listen(port, () => {});
