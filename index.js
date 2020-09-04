@@ -154,17 +154,18 @@ async function getMaterial(url, id) {
       data: {
         title: "h3",
         summary1: ".hoja",
-        summary2: "div",
+        summary2: `#${id} .row`,
       },
     },
   });
 
   const regex = /\r?\n|\r/g;
+  console.log(scrapeResult.data.info[0].summary2);
 
   if (scrapeResult.data.info[0].summary1 === "") {
     return {
       description: scrapeResult.data.info[0].summary2.replace(regex, "\n"),
-      title: "",
+      title: scrapeResult.data.info[0].title,
     };
   }
 
