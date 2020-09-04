@@ -65,7 +65,14 @@ async function getCalendar(url) {
           selector: "a",
           attr: "href",
         },
-        day: "div h4",
+        day: {
+          selector: "div h4",
+          eq: 0,
+        },
+        month: {
+          selector: "div h4",
+          eq: 1,
+        },
         number: "div h2",
       },
     },
