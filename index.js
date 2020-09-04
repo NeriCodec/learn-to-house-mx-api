@@ -165,7 +165,7 @@ async function getMaterial(url, id) {
   if (scrapeResult.data.info[0].summary1 === "") {
     return {
       description: scrapeResult.data.info[0].summary2.replace(regex, "\n"),
-      title: scrapeResult.data.info[0].title,
+      title: "",
     };
   }
 
