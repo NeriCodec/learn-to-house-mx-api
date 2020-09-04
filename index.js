@@ -153,16 +153,25 @@ async function getMaterial(url, id) {
       listItem: `#${id}`,
       data: {
         title: "h3",
-        summary: ".hoja",
+        summary1: ".hoja",
+        summary2: "div",
       },
     },
   });
 
   const regex = /\r?\n|\r/g;
 
-  var description = scrapeResult.data.info[0].summary.replace(regex, "\n");
+  if (scrapeResult.data.info[0].summary1 === "") {
+    return {
+      description: scrapeResult.data.info[0].summary2.replace(regex, "\n"),
+      title: "",
+    };
+  }
 
-  return description;
+  return {
+    description: scrapeResult.data.info[0].summary1.replace(regex, "\n"),
+    title: scrapeResult.data.info[0].title,
+  };
 }
 
 app.listen(port, () => {});
