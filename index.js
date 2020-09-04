@@ -160,7 +160,7 @@ async function getMaterial(url, id) {
 
   const regex = /\r?\n|\r/g;
 
-  var description = scrapeResult.data.info[0].summary.replace(regex, "");
+  var description = scrapeResult.data.info[0].summary.replace(regex, "\n");
 
   return description;
 }
