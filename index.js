@@ -7,10 +7,14 @@ var port = process.env.PORT || 3000;
 app.get("/get-calendar", async (req, res) => {
   try {
     var calendar = await getCalendar(req.query.url);
+    var schedule = await getSchedule(req.query.url);
 
     res.status(200).send({
       status: "ok",
-      data: calendar,
+      data: {
+        calendar,
+        schedule,
+      },
     });
   } catch (error) {
     res.status(500).send({ status: "error", data: error });
@@ -78,7 +82,27 @@ async function getCalendar(url) {
     },
   });
 
-  return scrapeResult.data;
+  return scrapeResult.data.info;
+}
+
+async function getSchedule(url) {
+  const scrapeResult = await scrapeIt(url, {
+    info: {
+      listItem: ".container .row div.col-lg-12.col-md-12.col-sm-12.col-xs-12",
+      data: {
+        link: {
+          selector: "img",
+          attr: "data-src",
+        },
+      },
+    },
+  });
+
+  var filterEmpty = scrapeResult.data.info.filter(function (subject) {
+    return subject.link !== "";
+  });
+
+  return filterEmpty;
 }
 
 async function getTopicsBySubjects(url) {
