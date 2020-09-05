@@ -24,10 +24,12 @@ app.get("/get-calendar", async (req, res) => {
 app.get("/get-subjects", async (req, res) => {
   try {
     var data = await getTopicsBySubjects(req.query.url);
+    var books = await getBooks(req.query.url);
 
     res.status(200).send({
       status: "ok",
       data,
+      books,
     });
   } catch (error) {
     res.status(500).send({ status: "error", data: error });
@@ -171,6 +173,30 @@ function ytVidId(url) {
   return url.match(p) ? RegExp.$1 : false;
 }
 
+async function getBooks(url) {
+  const scrapeResult = await scrapeIt(url, {
+    info: {
+      listItem: ".carousel-inner",
+      data: {
+        img: {
+          selector: "img",
+          attr: "data-src",
+        },
+        title: {
+          selector: "img",
+          attr: "title",
+        },
+        book: {
+          selector: "a",
+          attr: "href",
+        },
+      },
+    },
+  });
+
+  return scrapeResult.data.info;
+}
+
 async function getMaterial(url, id) {
   const scrapeResult = await scrapeIt(url, {
     info: {
@@ -184,7 +210,6 @@ async function getMaterial(url, id) {
   });
 
   const regex = /\r?\n|\r/g;
-  console.log(scrapeResult.data.info[0].summary2);
 
   if (scrapeResult.data.info[0].summary1 === "") {
     return {
