@@ -52,10 +52,12 @@ app.get("/get-material-youtube", async (req, res) => {
 app.get("/get-material", async (req, res) => {
   try {
     var data = await getMaterial(req.query.url, req.query.asignature);
+    var document = await getDocumentLink(req.query.url, req.query.asignature);
 
     res.status(200).send({
       status: "ok",
       data,
+      document,
     });
   } catch (error) {
     res.status(500).send({ status: "error", data: error });
@@ -222,6 +224,38 @@ async function getMaterial(url, id) {
     description: scrapeResult.data.info[0].summary1.replace(regex, "\n"),
     title: scrapeResult.data.info[0].title,
   };
+}
+
+async function getDocumentLink(url, id) {
+  const scrapeResult = await scrapeIt(url, {
+    info: {
+      listItem: `#${id} strong`,
+      data: {
+        link: {
+          selector: "a",
+          attr: "href",
+        },
+      },
+    },
+  });
+
+  if (scrapeResult.data.info.length === 0) {
+    const scrapeResult1 = await scrapeIt(url, {
+      info: {
+        listItem: `#${id} .video`,
+        data: {
+          link: {
+            selector: "a",
+            attr: "href",
+          },
+        },
+      },
+    });
+
+    return scrapeResult1.data.info;
+  }
+
+  return scrapeResult.data.info;
 }
 
 app.listen(port, () => {});
