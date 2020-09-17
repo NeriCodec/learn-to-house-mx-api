@@ -252,10 +252,18 @@ async function getDocumentLink(url, id) {
       },
     });
 
-    return scrapeResult1.data.info;
+    var filterEmpty = scrapeResult1.data.info.filter(function (item) {
+      return item.link !== "";
+    });
+
+    return filterEmpty;
   }
 
-  return scrapeResult.data.info;
+  var filterEmpty = scrapeResult.data.info.filter(function (item) {
+    return item.link !== "";
+  });
+
+  return filterEmpty;
 }
 
 app.listen(port, () => {});
