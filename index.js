@@ -4,6 +4,13 @@ var scrapeIt = require("scrape-it");
 
 var port = process.env.PORT || 3000;
 
+app.get("/", function (request, response) {
+  res.status(200).send({
+    status: "ok",
+    data: {},
+  });
+});
+
 app.get("/get-calendar", async (req, res) => {
   try {
     var calendar = await getCalendar(req.query.url);
