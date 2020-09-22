@@ -4,7 +4,7 @@ var scrapeIt = require("scrape-it");
 
 var port = process.env.PORT || 3000;
 
-app.get("/", function (request, response) {
+app.get("/", function (req, res) {
   res.status(200).send({
     status: "ok",
     data: {},
