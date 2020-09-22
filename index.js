@@ -1,17 +1,15 @@
 var express = require("express");
 var scrapeIt = require("scrape-it");
+var app = express();
+
 const Sentry = require("@sentry/node");
 
+const PORT = process.env.PORT || 3000;
 Sentry.init({
   dsn:
     "https://daa4add89f1a470c84a56613b6c2fcbb@o451648.ingest.sentry.io/5437846",
   tracesSampleRate: 1.0,
 });
-
-const PORT = process.env.PORT || 3000;
-
-var app = express();
-app.set("port", PORT);
 
 app.get("/", function (req, res) {
   res.status(200).send({
