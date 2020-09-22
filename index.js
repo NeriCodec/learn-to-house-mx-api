@@ -1,6 +1,13 @@
 var express = require("express");
 var app = express();
 var scrapeIt = require("scrape-it");
+const Sentry = require("@sentry/node");
+
+Sentry.init({
+  dsn:
+    "https://daa4add89f1a470c84a56613b6c2fcbb@o451648.ingest.sentry.io/5437846",
+  tracesSampleRate: 1.0,
+});
 
 var port = process.env.PORT || 3000;
 
@@ -11,7 +18,7 @@ app.get("/", function (req, res) {
   });
 });
 
-app.get("/get-calendar", async (req, res, next) => {
+app.get("/get-calendar", async (req, res) => {
   try {
     var calendar = await getCalendar(req.query.url);
     var schedule = await getSchedule(req.query.url);
@@ -24,8 +31,8 @@ app.get("/get-calendar", async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(error);
-    // res.status(500).send({ status: "error", data: error });
+    Sentry.captureException(error);
+    res.status(500).send({ status: "error", data: error });
   }
 });
 
@@ -40,6 +47,7 @@ app.get("/get-subjects", async (req, res) => {
       books,
     });
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send({ status: "error", data: error });
   }
 });
@@ -53,6 +61,7 @@ app.get("/get-material-youtube", async (req, res) => {
       data,
     });
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send({ status: "error", data: error });
   }
 });
@@ -68,6 +77,7 @@ app.get("/get-material", async (req, res) => {
       document,
     });
   } catch (error) {
+    Sentry.captureException(error);
     res.status(500).send({ status: "error", data: error });
   }
 });
