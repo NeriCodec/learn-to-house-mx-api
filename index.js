@@ -11,7 +11,7 @@ app.get("/", function (req, res) {
   });
 });
 
-app.get("/get-calendar", async (req, res) => {
+app.get("/get-calendar", async (req, res, next) => {
   try {
     var calendar = await getCalendar(req.query.url);
     var schedule = await getSchedule(req.query.url);
@@ -24,7 +24,8 @@ app.get("/get-calendar", async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).send({ status: "error", data: error });
+    next(error);
+    // res.status(500).send({ status: "error", data: error });
   }
 });
 
