@@ -58,6 +58,7 @@ app.get("/get-material-youtube", async (req, res) => {
 
 app.get("/get-material", async (req, res) => {
   try {
+    console.log("GET MATERIAL");
     var data = await getMaterial(req.query.url, req.query.asignature);
     var document = await getDocumentLink(req.query.url, req.query.asignature);
 
@@ -207,6 +208,7 @@ async function getBooks(url) {
 }
 
 async function getMaterial(url, id) {
+  console.log("START SCRAPE");
   const scrapeResult = await scrapeIt(url, {
     info: {
       listItem: `#${id}`,
@@ -220,6 +222,7 @@ async function getMaterial(url, id) {
 
   const regex = /\r?\n|\r/g;
 
+  console.log("DONE SCRAPE");
   if (scrapeResult.data.info[0].summary1 === "") {
     return {
       description: scrapeResult.data.info[0].summary2.replace(regex, "\n"),
