@@ -11,10 +11,7 @@ app.get("/", function (req, res) {
   });
 });
 
-app.get("/get-calendar", async (req, res, next) => {
-  req.setTimeout(0); // no timeout for all requests, your server will be DoS'd
-  next();
-
+app.get("/get-calendar", async (req, res) => {
   try {
     var calendar = await getCalendar(req.query.url);
     var schedule = await getSchedule(req.query.url);
