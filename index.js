@@ -11,18 +11,31 @@ app.get("/", function (req, res) {
   });
 });
 
-app.get("/get-calendar", async (req, res) => {
+app.get("/get-calendar", (req, res) => {
   try {
-    var calendar = await getCalendar(req.query.url);
-    var schedule = await getSchedule(req.query.url);
+    getCalendar(req.query.url)
+      .then((calendar) => {
+        res.status(200).send({
+          status: "ok",
+          data: {
+            calendar,
+            // schedule,
+          },
+        });
+      })
+      .catch(() => {
+        res.status(500).send({ status: "error", data: error });
+      });
 
-    res.status(200).send({
-      status: "ok",
-      data: {
-        calendar,
-        schedule,
-      },
-    });
+    // var schedule = await getSchedule(req.query.url);
+
+    // res.status(200).send({
+    //   status: "ok",
+    //   data: {
+    //     calendar,
+    //     // schedule,
+    //   },
+    // });
   } catch (error) {
     res.status(500).send({ status: "error", data: error });
   }
@@ -71,32 +84,35 @@ app.get("/get-material", async (req, res) => {
   }
 });
 
-async function getCalendar(url) {
-  console.log("GET CALENDAR");
-  const scrapeResult = await scrapeIt(url, {
-    info: {
-      listItem: "#original-cal div .dia_fch",
-      data: {
-        link: {
-          selector: "a",
-          attr: "href",
+function getCalendar(url) {
+  return new Promise((resolve, reject) => {
+    scrapeIt(url, {
+      info: {
+        listItem: "#original-cal div .dia_fch",
+        data: {
+          link: {
+            selector: "a",
+            attr: "href",
+          },
+          day: {
+            selector: "div h4",
+            eq: 0,
+          },
+          month: {
+            selector: "div h4",
+            eq: 1,
+          },
+          number: "div h2",
         },
-        day: {
-          selector: "div h4",
-          eq: 0,
-        },
-        month: {
-          selector: "div h4",
-          eq: 1,
-        },
-        number: "div h2",
       },
-    },
+    })
+      .then((scrapeResult) => {
+        resolve(scrapeResult.data.info);
+      })
+      .catch(() => {
+        reject();
+      });
   });
-
-  console.log(scrapeResult);
-
-  return scrapeResult.data.info;
 }
 
 async function getSchedule(url) {
