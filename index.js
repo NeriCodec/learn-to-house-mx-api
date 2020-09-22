@@ -72,6 +72,7 @@ app.get("/get-material", async (req, res) => {
 });
 
 async function getCalendar(url) {
+  console.log("GET CALENDAR");
   const scrapeResult = await scrapeIt(url, {
     info: {
       listItem: "#original-cal div .dia_fch",
@@ -92,6 +93,8 @@ async function getCalendar(url) {
       },
     },
   });
+
+  console.log(scrapeResult);
 
   return scrapeResult.data.info;
 }
