@@ -1,5 +1,4 @@
 var express = require("express");
-var app = express();
 var scrapeIt = require("scrape-it");
 const Sentry = require("@sentry/node");
 
@@ -9,7 +8,10 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-var port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
+
+var app = express();
+app.set("port", PORT);
 
 app.get("/", function (req, res) {
   res.status(200).send({
@@ -284,4 +286,4 @@ async function getDocumentLink(url, id) {
   return filterEmpty;
 }
 
-app.listen(port, () => {});
+app.listen(PORT, () => {});
