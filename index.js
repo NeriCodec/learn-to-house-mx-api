@@ -4,6 +4,54 @@ var app = express();
 
 const PORT = process.env.PORT || 3000;
 
+const extendTimeoutMiddleware = (req, res, next) => {
+  const space = " ";
+  let isFinished = false;
+  let isDataSent = false;
+
+  res.once("finish", () => {
+    isFinished = true;
+  });
+
+  res.once("end", () => {
+    isFinished = true;
+  });
+
+  res.once("close", () => {
+    isFinished = true;
+  });
+
+  res.on("data", (data) => {
+    // Look for something other than our blank space to indicate that real
+    // data is now being sent back to the client.
+    if (data !== space) {
+      isDataSent = true;
+    }
+  });
+
+  const waitAndSend = () => {
+    setTimeout(() => {
+      // If the response hasn't finished and hasn't sent any data back....
+      if (!isFinished && !isDataSent) {
+        // Need to write the status code/headers if they haven't been sent yet.
+        if (!res.headersSent) {
+          res.writeHead(202);
+        }
+
+        res.write(space);
+
+        // Wait another 15 seconds
+        waitAndSend();
+      }
+    }, 15000);
+  };
+
+  waitAndSend();
+  next();
+};
+
+app.use(extendTimeoutMiddleware);
+
 app.get("/", function (req, res) {
   res.status(200).send({
     status: "ok",
@@ -11,31 +59,18 @@ app.get("/", function (req, res) {
   });
 });
 
-app.get("/get-calendar", (req, res) => {
+app.get("/get-calendar", async (req, res) => {
   try {
-    getCalendar(req.query.url)
-      .then((calendar) => {
-        res.status(200).send({
-          status: "ok",
-          data: {
-            calendar,
-            // schedule,
-          },
-        });
-      })
-      .catch(() => {
-        res.status(500).send({ status: "error", data: error });
-      });
+    var calendar = await getCalendar(req.query.url);
+    var schedule = await getSchedule(req.query.url);
 
-    // var schedule = await getSchedule(req.query.url);
-
-    // res.status(200).send({
-    //   status: "ok",
-    //   data: {
-    //     calendar,
-    //     // schedule,
-    //   },
-    // });
+    res.status(200).send({
+      status: "ok",
+      data: {
+        calendar,
+        schedule,
+      },
+    });
   } catch (error) {
     res.status(500).send({ status: "error", data: error });
   }
@@ -84,35 +119,29 @@ app.get("/get-material", async (req, res) => {
   }
 });
 
-function getCalendar(url) {
-  return new Promise((resolve, reject) => {
-    scrapeIt(url, {
-      info: {
-        listItem: "#original-cal div .dia_fch",
-        data: {
-          link: {
-            selector: "a",
-            attr: "href",
-          },
-          day: {
-            selector: "div h4",
-            eq: 0,
-          },
-          month: {
-            selector: "div h4",
-            eq: 1,
-          },
-          number: "div h2",
+async function getCalendar(url) {
+  const scrapeResult = await scrapeIt(url, {
+    info: {
+      listItem: "#original-cal div .dia_fch",
+      data: {
+        link: {
+          selector: "a",
+          attr: "href",
         },
+        day: {
+          selector: "div h4",
+          eq: 0,
+        },
+        month: {
+          selector: "div h4",
+          eq: 1,
+        },
+        number: "div h2",
       },
-    })
-      .then((scrapeResult) => {
-        resolve(scrapeResult.data.info);
-      })
-      .catch(() => {
-        reject();
-      });
+    },
   });
+
+  return scrapeResult.data.info;
 }
 
 async function getSchedule(url) {
