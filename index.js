@@ -2,14 +2,7 @@ var express = require("express");
 var scrapeIt = require("scrape-it");
 var app = express();
 
-const Sentry = require("@sentry/node");
-
 const PORT = process.env.PORT || 3000;
-Sentry.init({
-  dsn:
-    "https://daa4add89f1a470c84a56613b6c2fcbb@o451648.ingest.sentry.io/5437846",
-  tracesSampleRate: 1.0,
-});
 
 app.get("/", function (req, res) {
   res.status(200).send({
@@ -31,7 +24,6 @@ app.get("/get-calendar", async (req, res) => {
       },
     });
   } catch (error) {
-    Sentry.captureException(error);
     res.status(500).send({ status: "error", data: error });
   }
 });
@@ -47,7 +39,6 @@ app.get("/get-subjects", async (req, res) => {
       books,
     });
   } catch (error) {
-    Sentry.captureException(error);
     res.status(500).send({ status: "error", data: error });
   }
 });
@@ -61,7 +52,6 @@ app.get("/get-material-youtube", async (req, res) => {
       data,
     });
   } catch (error) {
-    Sentry.captureException(error);
     res.status(500).send({ status: "error", data: error });
   }
 });
@@ -77,7 +67,6 @@ app.get("/get-material", async (req, res) => {
       document,
     });
   } catch (error) {
-    Sentry.captureException(error);
     res.status(500).send({ status: "error", data: error });
   }
 });
