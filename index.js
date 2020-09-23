@@ -91,15 +91,7 @@ async function getCalendar(url) {
         number: "div h2",
       },
     },
-  })
-    .catch((error) => {
-      console.log("ERROR GET CALENDAR");
-      console.log(error);
-    })
-    .finally((error) => {
-      console.log("finally GET CALENDAR");
-      console.log(error);
-    });
+  });
 
   return scrapeResult.data.info;
 }
