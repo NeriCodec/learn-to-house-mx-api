@@ -93,9 +93,11 @@ async function getCalendar(url) {
     },
   })
     .catch((error) => {
+      console.log("ERROR GET CALENDAR");
       console.log(error);
     })
     .finally((error) => {
+      console.log("finally GET CALENDAR");
       console.log(error);
     });
 
